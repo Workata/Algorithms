@@ -1,39 +1,87 @@
+#include<iostream>
 #include<bits/stdc++.h>
+#include <windows.h>
 using namespace std;
-#define N 10000      //array size
+int tab[100000],n;
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-int n;
-
-void quickSort(int first, int last,int* tab)  //first - first index, last - last index
+void showArray(int startIndex, int endIndex)
 {
-    //cout<<first<<" "<<last<<"\n";
-    if(first == last) return;
+    cout<<endl<<" ";
+    for(int i=startIndex;i<=endIndex;i++)cout<<tab[i]<<" ";
+}
 
-    int middle = (last+first)/2;
-    int* j = tab + first;
-    for(int* i = (tab + first) ;i<=(tab + last);i++)  //search array
+void showArrayPiwot(int startIndex, int endIndex, int piwotIndex)
+{
+    cout<<endl<<" ";
+    for(int i=startIndex;i<=endIndex;i++)
     {
-        if(tab[middle]>*i)
+        if(i==piwotIndex)
         {
-            swap(*i,*j);
-            j++;
-        }
-    }
+            SetConsoleTextAttribute(hConsole, 12);
+            cout<<tab[i]<<" ";
+            SetConsoleTextAttribute(hConsole, 7);
 
-    quickSort(first,(last+first)/2,tab);
-    quickSort((last+first)/2+1,last,tab);
+        }
+        else  cout<<tab[i]<<" ";
+    }
+}
+
+void showArrayBorder(int startIndex, int endIndex, int borderIndex)
+{
+    cout<<endl<<" ";
+    for(int i=startIndex;i<=endIndex;i++)
+    {
+        if(i==borderIndex)
+        {
+            SetConsoleTextAttribute(hConsole, 10);
+            cout<<tab[i]<<" ";
+            SetConsoleTextAttribute(hConsole, 7);
+
+        }
+        else  cout<<tab[i]<<" ";
+    }
+}
+
+int Partition(int p, int r)
+{
+    int x = tab[p]; //wybor piwota
+    showArrayPiwot(p,r,p);
+    cout<<"    <---- przed partycja";
+    int i = p-1;
+    int j = r+1;
+
+    while(true)
+    {
+        do {j--; }while(tab[j]>x);  //>         warunek przeciwny do until
+        do {i++; }while(tab[i]<x); //<
+        if(i<j) swap(tab[i],tab[j]);
+        else break;
+    }
+    return j;
+}
+
+void QuickSort(int p,int r)
+{
+    if(p<r)
+    {
+
+        int q = Partition(p,r);
+        showArrayBorder(p,r,q);
+        cout<<"    <---- po partycji";
+        QuickSort(p,q);
+        QuickSort(q+1,r);
+    }
 }
 
 int main()
 {
-    int tab[N];
+    cout<< " ";
     cin>>n;
+    cout<<" ";
     for(int i=0;i<n;i++)cin>>tab[i];
-    cout<<"\n";
-    quickSort(0,n-1,tab);
+    QuickSort(0,n-1);
 
-    cout<<"\n";
-    for(int i=0;i<n;i++)cout<<tab[i]<<" ";
-
-    return 0;
+    cout<<endl<<endl<<" Sorted array:";
+    showArray(0,n-1);
 }
